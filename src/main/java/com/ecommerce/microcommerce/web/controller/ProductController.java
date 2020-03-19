@@ -86,7 +86,6 @@ public class ProductController {
     @ApiOperation(value="Mettre à jour un produit")
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
-
         productDao.save(product);
     }
 
@@ -94,18 +93,23 @@ public class ProductController {
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
-
         return productDao.chercherUnProduitCher(400);
     }
 
     @ApiOperation(value="Afficher la liste des produits avec la marge")
     @GetMapping(value = "/AdminProduits")
     public Map<String, Integer> afficherProduitsAdmin (){
-
         List<Product> produits = productDao.findAll();
         Map<String, Integer> produitsAvecMarge = new HashMap<>();
         produits.forEach(produit->produitsAvecMarge.put(produit.toString(), produit.calculMargeProduit()));
         return produitsAvecMarge;
+    }
+
+    @ApiOperation(value="Afficher la liste des produits pas order alphabetique")
+    @GetMapping(value="/ProduitsTrier")
+    public List<Product> trierProduitsParOrdreAlphabetique(){
+        return productDao.findAllByOrderByNomAsc();
+
     }
 
 }
