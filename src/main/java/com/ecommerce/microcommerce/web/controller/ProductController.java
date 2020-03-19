@@ -16,7 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
+import java.util.*;
 
 
 @Api( description="API pour es opérations CRUD sur les produits.")
@@ -27,11 +27,9 @@ public class ProductController {
     @Autowired
     private ProductDao productDao;
 
-
     //Récupérer la liste des produits
-
+    @ApiOperation(value="Recupérer la liste des produits")
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
-
     public MappingJacksonValue listeProduits() {
 
         Iterable<Product> produits = productDao.findAll();
@@ -47,11 +45,9 @@ public class ProductController {
         return produitsFiltres;
     }
 
-
     //Récupérer un produit par son Id
     @ApiOperation(value = "Récupère un produit grâce à son ID à condition que celui-ci soit en stock!")
     @GetMapping(value = "/Produits/{id}")
-
     public Product afficherUnProduit(@PathVariable int id) {
 
         Product produit = productDao.findById(id);
@@ -61,12 +57,9 @@ public class ProductController {
         return produit;
     }
 
-
-
-
     //ajouter un produit
+    @ApiOperation(value="Ajouter un produit")
     @PostMapping(value = "/Produits")
-
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
 
         Product productAdded =  productDao.save(product);
@@ -83,12 +76,14 @@ public class ProductController {
         return ResponseEntity.created(location).build();
     }
 
+    @ApiOperation(value="Supprimer un produit")
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
 
         productDao.delete(id);
     }
 
+    @ApiOperation(value="Mettre à jour un produit")
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
 
@@ -103,6 +98,14 @@ public class ProductController {
         return productDao.chercherUnProduitCher(400);
     }
 
+    @ApiOperation(value="Afficher la liste des produits avec la marge")
+    @GetMapping(value = "/AdminProduits")
+    public Map<String, Integer> afficherProduitsAdmin (){
 
+        List<Product> produits = productDao.findAll();
+        Map<String, Integer> produitsAvecMarge = new HashMap<>();
+        produits.forEach(produit->produitsAvecMarge.put(produit.toString(), produit.calculMargeProduit()));
+        return produitsAvecMarge;
+    }
 
 }

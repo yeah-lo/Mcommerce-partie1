@@ -77,4 +77,8 @@ public class Product {
                 ", prix=" + prix +
                 '}';
     }
+
+    public int calculMargeProduit(){
+        return this.getPrix() - this.getPrixAchat();
+    }
 }
